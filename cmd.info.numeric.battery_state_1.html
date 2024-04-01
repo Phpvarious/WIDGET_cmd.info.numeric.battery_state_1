@@ -1,0 +1,200 @@
+<div class="cmd cmd-widget #history#" data-type="info" data-subtype="numeric" data-cmd_id="#id#" data-cmd_uid="#uid#" data-version="#version#" data-eqLogic_id="#eqLogic_id#">
+<!-- ################ Battery State 1 ################
+  Widget name : cmd.info.numeric.battery_state_1
+  Author : Phpvarious
+  Inspiration : https://github.com/Desaydrone/jeedom_v4_widget/wiki/Battery-State
+  Last Uptade : 2024/04/01 23h30 - Phpvarious
+-->
+  <template>
+    <div>name_display : Remplacement du nom de la commande.</div>
+    <div>threshold : Désactive les seuils si = 0 [défaut : 1 (activé)].</div>
+    <div>defaut_color : Couleur par défaut des éléments si threshold = 0.</div>
+    <div>warning : valeur du seuil warning du widget [défaut : 30]</div>
+    <div>danger : valeur du seuil danger du widget [défaut : 5]</div>
+  </template>
+  <div class="content">
+    <div class="widget-#uid#">
+      <div class="box_top-#uid#">
+        <div class="battery-#uid#">
+          <div class="battery-level-#uid#"></div>
+        </div>
+        <span class="value-#uid#"></span>
+        <div class="cmdStats-#uid# #hide_history#">
+          <span title='Min' class='tooltips'>#minHistoryValue#</span>|<span title='Moyenne' class='tooltips'>#averageHistoryValue#</span>|<span title='Max' class='tooltips'>#maxHistoryValue#</span> <i class="#tendance#"></i>
+        </div>
+      </div>
+      <div class="box_bottom-#uid# #hide_name#">#name_display#</div>
+    </div>
+  </div>
+  <script>
+    var debug#uid# = ('#debug#' == 1) ? true : false;
+    function log#uid#(text) { if (debug#uid#) console.log(text); }
+    
+    /* Variables & paramètres */
+    if ('#defaut_color#' != '#'+'defaut_color#') document.documentElement.style.setProperty('--colorDefaut-#uid#', '#defaut_color#')
+    var warning#uid# = ('#warning#' != '#' + 'warning#') ? parseInt('#warning#') : 30
+    var danger#uid# = ('#danger#' != '#' + 'danger#') ? parseInt('#danger#') : 5
+    var threshold#uid# = ('#threshold#' == '0') ? false : true
+    var versionWidget#uid# = '01/04/2024 23h30'
+    
+    
+    log#uid#('┌─────────────────── Widget Battery State 1 [#id#] Compatibilité V4.3 V4.4 [' + versionWidget#uid# + '] ───────────────')
+    /* -- Compatibilité V4.2 V4.3 V4.4 -- */
+    /* */ if (typeof jeedom.cmd.addUpdateFunction !== 'function') { // a partir de la 4.3
+    /* */  log#uid#('| jeedom.cmd.addUpdateFunction no exist')
+    /* */  jeedom.cmd.addUpdateFunction = function(id,func) { jeedom.cmd.update[id]=func; }
+    /* */ }
+    /* ---------------------------------- */ 
+    log#uid#('| warning = ' + warning#uid#)
+    log#uid#('| danger = ' + danger#uid#)
+    log#uid#('└────────────────────────────────────')
+    jeedom.cmd.update['#id#'] = function(_options) {
+      if (is_object(cmd = document.querySelector('.cmd[data-cmd_uid="#uid#"]'))) {
+        let value = _options.display_value
+        cmd.querySelector('.battery-level-#uid#').setAttribute('style', 'height:' + value + '%;')
+        cmd.querySelector('.value-#uid#').innerHTML = value + _options.unit
+        cmd.querySelector('.widget-#uid#').classList.remove('warning-#uid#', 'danger-#uid#', 'success-#uid#')
+        if (threshold#uid# && value >= 0 && value < danger#uid#) cmd.querySelector('.widget-#uid#').classList.add('danger-#uid#')
+        else if (threshold#uid# && value >= danger#uid# && value < warning#uid#) cmd.querySelector('.widget-#uid#').classList.add('warning-#uid#')
+        else if (threshold#uid#) cmd.querySelector('.widget-#uid#').classList.add('success-#uid#')
+        cmd.querySelector('.widget-#uid#').setAttribute('title', '{{Date de valeur}}: ' + _options.valueDate + '<br>{{Date de collecte}}: ' + _options.collectDate)
+      }
+    }
+    jeedom.cmd.refreshValue([{ cmd_id: '#id#', value: '#value#', display_value: '#state#', valueDate: '#valueDate#', collectDate: '#collectDate#', alertLevel: '#alertLevel#', unit: '#unite#' }])
+  </script>
+  <style>
+    :root {
+      --colorSuccess-#uid#: var(--al-success-color);
+      --colorDanger-#uid#: var(--al-danger-color);
+      --colorWarning-#uid#: var(--al-warning-color);
+      --colorDefaut-#uid#: var(--txt-color);
+      --width-#uid#: 90px;
+      --height-#uid#: 68px;
+      --radius-#uid#: 10%;
+  	}
+    .widget-#uid# { 
+      border-radius: var(--radius-#uid#); 
+      border: 3px solid var(--colorDefaut-#uid#);
+      width: var(--width-#uid#);
+      min-width: 70px;
+      height: var(--height-#uid#);
+      min-height: 90px;
+      align-items: center;
+      display: inline-flex;
+      flex-direction: column;
+      justify-content: end;
+      overflow: hidden;
+    }
+    .box_bottom-#uid# { 
+      background: var(--colorDefaut-#uid#);
+      width: 100%;
+      color: var(--eqTitle-color);
+      line-height: 16px;
+    }
+    .box_top-#uid# {
+      height: 100%;
+      align-items: center;
+      display: inline-flex;
+      flex-direction: column;
+      justify-content: space-evenly;
+      width: 100%;
+    }
+    .battery-#uid# {
+      border: 3px solid var(--colorDefaut-#uid#);
+      width: 18px;
+      height: 28px;
+      padding: 2px;
+      border-radius: 4px;
+      position: relative;
+    }
+    .battery-#uid#::after {
+      content: '';
+      display: block;
+      position: absolute;
+      top: -1px; left: -1px; right: -1px; bottom: -1px;
+      border: 1px solid rgba(var(--eq-bg-color), var(--opacity));
+      border-radius: 2px;
+    }
+    .battery-#uid#::before {
+      content: '';
+      height: 3px;
+      width: 10px;
+      display: block;
+      position: absolute;
+      top: -5px;
+      left: 1px;
+      border-radius: 4px 4px 0 0;
+      background: var(--colorDefaut-#uid#);
+    }
+    [data-coloredicons='1'] .widget-#uid#.danger-#uid#, 
+    [data-coloredicons='1'] .widget-#uid#.danger-#uid# .battery-#uid# { border-color: var(--colorDanger-#uid#); }
+    
+    [data-coloredicons='1'] .widget-#uid#.warning-#uid#, 
+    [data-coloredicons='1'] .widget-#uid#.warning-#uid# .battery-#uid# { border-color: var(--colorWarning-#uid#); }
+    
+    [data-coloredicons='1'] .widget-#uid#.success-#uid#, 
+    [data-coloredicons='1'] .widget-#uid#.success-#uid# .battery-#uid# { border-color: var(--colorSuccess-#uid#); }
+    
+    [data-coloredicons='1'] .danger-#uid# .battery-#uid#::before, 
+    [data-coloredicons='1'] .danger-#uid# .box_bottom-#uid#, 
+    [data-coloredicons='1'] .danger-#uid# .battery-level-#uid# { background: var(--colorDanger-#uid#); }
+    
+    [data-coloredicons='1'] .warning-#uid# .battery-#uid#::before, 
+    [data-coloredicons='1'] .warning-#uid# .box_bottom-#uid#, 
+    [data-coloredicons='1'] .warning-#uid# .battery-level-#uid# { background: var(--colorWarning-#uid#); }
+    
+    [data-coloredicons='1'] .success-#uid# .battery-#uid#::before, 
+    [data-coloredicons='1'] .success-#uid# .box_bottom-#uid#, 
+    [data-coloredicons='1'] .success-#uid# .battery-level-#uid# { background: var(--colorSuccess-#uid#); }
+    
+    .value-#uid# { font-size: 18px; font-weight: bold; }
+    .cmdStats-#uid# { font-size: 10px; }
+    .battery-level-#uid# {
+      background-color: var(--colorDefaut-#uid#);
+      position: absolute;
+      bottom: 0px;
+      left: 0;
+      right: 0;
+    }
+    [data-coloredicons='1'] .danger-#uid# .battery-level-#uid#::before { color: var(--colorDanger-#uid#); }
+    .danger2-#uid# .battery-level-#uid#::before {
+      content: '';
+      background-image: url(data:image/svg+xml;charset=US-ASCII,%3C%3Fxml%20version%3D%221.0%22%20encoding%3D%22utf-8%22%3F%3E%3C!DOCTYPE%20svg%20PUBLIC%20%22-%2F%2FW3C%2F%2FDTD%20SVG%201.1%2F%2FEN%22%20%22http%3A%2F%2Fwww.w3.org%2FGraphics%2FSVG%2F1.1%2FDTD%2Fsvg11.dtd%22%3E%3Csvg%20version%3D%221.1%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20xmlns%3Axlink%3D%22http%3A%2F%2Fwww.w3.org%2F1999%2Fxlink%22%20width%3D%2232%22%20height%3D%2232%22%20viewBox%3D%220%200%2032%2032%22%3E%3Cg%3E%3C%2Fg%3E%20%3Cpath%20fill%3D%22%23e81309%22%20d%3D%22M17.927%2012l2.68-10.28c0.040-0.126%200.060-0.261%200.060-0.4%200-0.726-0.587-1.32-1.314-1.32-0.413%200-0.78%200.187-1.019%200.487l-13.38%2017.353c-0.18%200.227-0.287%200.513-0.287%200.827%200%200.733%200.6%201.333%201.333%201.333h8.073l-2.68%2010.28c-0.041%200.127-0.060%200.261-0.060%200.4%200.001%200.727%200.587%201.32%201.314%201.32%200.413%200%200.78-0.186%201.020-0.487l13.379-17.353c0.181-0.227%200.287-0.513%200.287-0.827%200-0.733-0.6-1.333-1.333-1.333h-8.073z%22%3E%3C%2Fpath%3E%3C%2Fsvg%3E);
+      background-size: 18px;
+      height: 18px;
+      width: 18px;display: block;
+      position: absolute;
+      top: -20px;
+      left: -3px;
+      -webkit-animation-name: blinker-#uid#;
+      -webkit-animation-duration: 0.6s;
+      -webkit-animation-iteration-count: infinite;
+      -webkit-animation-timing-function: ease-in-out;
+      -webkit-animation-direction: alternate;
+    }
+    .danger-#uid# .battery-level-#uid#::before {
+      font-family: "Font Awesome 5 Free";
+      content: "\f0e7";
+      font-weight: 900;
+      font-size: 14px;
+      -webkit-font-smoothing: antialiased;
+      top: -8px;
+      position: absolute;
+      left: 2px;
+      line-height: 0px;
+      -webkit-animation-name: blinker-#uid#;
+      -webkit-animation-duration: 0.6s;
+      -webkit-animation-iteration-count: infinite;
+      -webkit-animation-timing-function: ease-in-out;
+      -webkit-animation-direction: alternate;
+    }
+    
+    @-webkit-keyframes blinker-#uid# {
+      from { opacity: 1.0; }
+      to { opacity: 0.0; }
+    }
+    
+    /* for 4.3 */
+    [data-cmd_uid="#uid#"] .content { background-color: transparent; }
+  </style>
+</div>
