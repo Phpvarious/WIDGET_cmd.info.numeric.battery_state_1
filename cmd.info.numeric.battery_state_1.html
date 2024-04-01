@@ -3,7 +3,7 @@
   Widget name : cmd.info.numeric.battery_state_1
   Author : Phpvarious
   Inspiration : https://github.com/Desaydrone/jeedom_v4_widget/wiki/Battery-State
-  Last Uptade : 2024/04/01 23h30 - Phpvarious
+  Last Uptade : 2024/04/02 00h30 - Phpvarious
 -->
   <template>
     <div>name_display : Remplacement du nom de la commande.</div>
@@ -11,6 +11,7 @@
     <div>defaut_color : Couleur par défaut des éléments si threshold = 0.</div>
     <div>warning : valeur du seuil warning du widget [défaut : 30]</div>
     <div>danger : valeur du seuil danger du widget [défaut : 5]</div>
+    <div>radius: arrondi du widget [défaut : 10 | Max : 50 (rond) ]</div>
   </template>
   <div class="content">
     <div class="widget-#uid#">
@@ -32,10 +33,11 @@
     
     /* Variables & paramètres */
     if ('#defaut_color#' != '#'+'defaut_color#') document.documentElement.style.setProperty('--colorDefaut-#uid#', '#defaut_color#')
+    if ('#radius#' != '#'+'radius#') document.documentElement.style.setProperty('--radius-#uid#', '#radius#'+'%')
     var warning#uid# = ('#warning#' != '#' + 'warning#') ? parseInt('#warning#') : 30
     var danger#uid# = ('#danger#' != '#' + 'danger#') ? parseInt('#danger#') : 5
     var threshold#uid# = ('#threshold#' == '0') ? false : true
-    var versionWidget#uid# = '01/04/2024 23h30'
+    var versionWidget#uid# = '2024/04/02 00h30'
     
     
     log#uid#('┌─────────────────── Widget Battery State 1 [#id#] Compatibilité V4.3 V4.4 [' + versionWidget#uid# + '] ───────────────')
