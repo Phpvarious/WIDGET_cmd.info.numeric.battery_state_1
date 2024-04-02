@@ -3,7 +3,7 @@
   Widget name : cmd.info.numeric.battery_state_1
   Author : Phpvarious
   Inspiration : https://github.com/Desaydrone/jeedom_v4_widget/wiki/Battery-State
-  Last Uptade : 2024/04/02 00h30 - Phpvarious
+  Last Uptade : 2024-04-02_06h45 - Phpvarious
 -->
   <template>
     <div>name_display : Remplacement du nom de la commande.</div>
@@ -12,6 +12,7 @@
     <div>warning : valeur du seuil warning du widget [défaut : 30]</div>
     <div>danger : valeur du seuil danger du widget [défaut : 5]</div>
     <div>radius: arrondi du widget [défaut : 10 | Max : 50 (rond) ]</div>
+    <div>horizontal : affiche la batterie horizontalement [défaut : 0]</div>
   </template>
   <div class="content">
     <div class="widget-#uid#">
@@ -37,8 +38,10 @@
     var warning#uid# = ('#warning#' != '#' + 'warning#') ? parseInt('#warning#') : 30
     var danger#uid# = ('#danger#' != '#' + 'danger#') ? parseInt('#danger#') : 5
     var threshold#uid# = ('#threshold#' == '0') ? false : true
-    var versionWidget#uid# = '2024/04/02 00h30'
-    
+    var versionWidget#uid# = '2024-04-02_06h45'
+    if (is_object(cmd = document.querySelector('.cmd[data-cmd_uid="#uid#"]'))) {
+      if ('#horizontal#' == '1') cmd.querySelector('.widget-#uid#').classList.add('rotate-#uid#')
+    }
     
     log#uid#('┌─────────────────── Widget Battery State 1 [#id#] Compatibilité V4.3 V4.4 [' + versionWidget#uid# + '] ───────────────')
     /* -- Compatibilité V4.2 V4.3 V4.4 -- */
@@ -189,6 +192,12 @@
       -webkit-animation-iteration-count: infinite;
       -webkit-animation-timing-function: ease-in-out;
       -webkit-animation-direction: alternate;
+    }
+    .rotate-#uid# .battery-level-#uid#::before{
+      transform: rotate(-90deg) translateY(1px) translateX(0px);
+    }
+    .rotate-#uid# .battery-#uid# {
+      transform: rotate(90deg);
     }
     
     @-webkit-keyframes blinker-#uid# {
