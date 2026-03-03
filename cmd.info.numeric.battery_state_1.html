@@ -44,16 +44,10 @@
     }
     
     log#uid#('┌─────────────────── Widget Battery State 1 [#id#] Compatibilité V4.3 V4.4 [' + versionWidget#uid# + '] ───────────────')
-    /* -- Compatibilité V4.2 V4.3 V4.4 -- */
-    /* */ if (typeof jeedom.cmd.addUpdateFunction !== 'function') { // a partir de la 4.3
-    /* */  log#uid#('| jeedom.cmd.addUpdateFunction no exist')
-    /* */  jeedom.cmd.addUpdateFunction = function(id,func) { jeedom.cmd.update[id]=func; }
-    /* */ }
-    /* ---------------------------------- */ 
     log#uid#('| warning = ' + warning#uid#)
     log#uid#('| danger = ' + danger#uid#)
     log#uid#('└────────────────────────────────────')
-    jeedom.cmd.update['#id#'] = function(_options) {
+    jeedom.cmd.addUpdateFunction('#id#',function(_options) {
       if (is_object(cmd = document.querySelector('.cmd[data-cmd_uid="#uid#"]'))) {
         let value = _options.display_value
         cmd.querySelector('.battery-level-#uid#').setAttribute('style', 'height:' + value + '%;')
@@ -64,7 +58,8 @@
         else if (threshold#uid#) cmd.querySelector('.widget-#uid#').classList.add('success-#uid#')
         cmd.querySelector('.widget-#uid#').setAttribute('title', '{{Date de valeur}}: ' + _options.valueDate + '<br>{{Date de collecte}}: ' + _options.collectDate)
       }
-    }
+    })
+	
     jeedom.cmd.refreshValue([{ cmd_id: '#id#', value: '#value#', display_value: '#state#', valueDate: '#valueDate#', collectDate: '#collectDate#', alertLevel: '#alertLevel#', unit: '#unite#' }])
   </script>
   <style>
